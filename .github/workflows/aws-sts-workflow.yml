@@ -1,0 +1,24 @@
+name: AWS example workflow
+on:
+  push
+env:
+  AWS_REGION : "us-east-2"
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+jobs:
+  S3BuketList:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ARN_ROLE }}
+          role-session-name: ci-cd
+          aws-region: ${{ env.AWS_REGION }}
+      # List bucket  in  AWS s3
+      - name:  AWS S3 Ls
+        run: |
+          aws s3 ls
